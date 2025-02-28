@@ -31,3 +31,19 @@ class HTMLNode():
 		)"
 
 		return textwrap.dedent(node_string)
+	
+class LeafNode(HTMLNode):
+	def __init__(self, tag:str, value:str, **kwargs) -> None:
+		if kwargs.get("children", None) is not None:
+			print("Leaf Node should not have children.")
+			return
+		super().__init__(tag=tag, value=value, **kwargs)
+
+	def to_html(self):
+		if self.value is None:
+			raise ValueError
+		
+		if self.tag is None:
+			return self.value
+		
+		return f"<{self.tag}>{self.value}</{self.tag}>"
