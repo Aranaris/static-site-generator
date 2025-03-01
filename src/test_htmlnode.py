@@ -1,6 +1,7 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode, ParentNode
+from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
+from textnode import TextNode
 
 class TestHTMLNode(unittest.TestCase):
 	def test_props_to_html(self):
@@ -36,15 +37,41 @@ class TestHTMLNode(unittest.TestCase):
 		self.assertEqual(node.to_html(), "Hello, world!")
 
 	def test_to_html_with_children(self):
-			child_node = LeafNode("span", "child")
-			parent_node = ParentNode("div", [child_node])
-			self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+		child_node = LeafNode("span", "child")
+		parent_node = ParentNode("div", [child_node])
+		self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
 
 	def test_to_html_with_grandchildren(self):
-			grandchild_node = LeafNode("b", "grandchild")
-			child_node = ParentNode("span", [grandchild_node])
-			parent_node = ParentNode("div", [child_node])
-			self.assertEqual(
-					parent_node.to_html(),
-					"<div><span><b>grandchild</b></span></div>",
-			)
+		grandchild_node = LeafNode("b", "grandchild")
+		child_node = ParentNode("span", [grandchild_node])
+		parent_node = ParentNode("div", [child_node])
+		self.assertEqual(
+				parent_node.to_html(),
+				"<div><span><b>grandchild</b></span></div>",
+		)
+
+	def test_text_to_html_normal_text(self):
+		text_node = TextNode("test string", "text")
+		new_node = text_node_to_html_node(text_node)
+		html_node = HTMLNode(tag=None, value="test string")
+		self.assertEqual(new_node, html_node)
+
+
+	def test_text_to_html_link_text(self):
+		text_node = TextNode("test string", "link", url="https://www.google.com")
+		new_node = text_node_to_html_node(text_node)
+		props = {
+				"href":"https://www.google.com"
+			}
+		html_node = HTMLNode(tag="a", value="test string", props=props)
+		self.assertEqual(new_node, html_node)
+
+	def test_text_to_html_image_node(self):
+		text_node = TextNode("test string", "image", url="https://www.google.com")
+		new_node = text_node_to_html_node(text_node)
+		props = {
+				"src":"https://www.google.com",
+				"alt":"test string"
+			}
+		html_node = HTMLNode(tag="img", value="", props=props)
+		self.assertEqual(new_node, html_node)

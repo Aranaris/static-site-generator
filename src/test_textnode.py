@@ -12,20 +12,20 @@ class TestTextNode(unittest.TestCase):
 
     def test_different(self):
         node = TextNode("This is a text node", TextType.BOLD)
-        node2 = TextNode("This is a text node", TextType.LINKS, url="https://www.google.com")
+        node2 = TextNode("This is a text node", TextType.LINK, url="https://www.google.com")
         self.assertNotEqual(node, node2)
         
-        node3 = TextNode("This is a text node", TextType.LINKS, url="https://www.google.com")
-        node4 = TextNode("This is a text node", TextType.IMAGES, url="https://www.google.com")
+        node3 = TextNode("This is a text node", TextType.LINK, url="https://www.google.com")
+        node4 = TextNode("This is a text node", TextType.IMAGE, url="https://www.google.com")
         self.assertNotEqual(node3, node4)
         
-        node5 = TextNode("This is a link", TextType.LINKS, url="https://www.google.com")
-        node6 = TextNode("This is a text node", TextType.LINKS, url="https://www.google.com")
+        node5 = TextNode("This is a link", TextType.LINK, url="https://www.google.com")
+        node6 = TextNode("This is a text node", TextType.LINK, url="https://www.google.com")
         self.assertNotEqual(node5, node6)
         
     def test_repr(self):
-        node = TextNode("This is a text node", TextType.LINKS, url="https://www.google.com")
-        self.assertEqual("TextNode(This is a text node, links, https://www.google.com)", repr(node))
+        node = TextNode("This is a text node", TextType.LINK, url="https://www.google.com")
+        self.assertEqual("TextNode(This is a text node, link, https://www.google.com)", repr(node))
         
         node1 = TextNode("This is a text node", TextType.BOLD)
         self.assertEqual("TextNode(This is a text node, bold)", repr(node1))

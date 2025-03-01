@@ -1,4 +1,5 @@
 import textwrap
+from textnode import TextNode, TextType
 
 class HTMLNode():
 	def __init__(self, **kwargs) -> None:
@@ -6,6 +7,14 @@ class HTMLNode():
 		self.value = kwargs.get("value", None)
 		self.children = kwargs.get("children", None)
 		self.props = kwargs.get("props", None)
+
+	def __eq__(self, node: object) -> bool:
+		if self.tag == node.tag and \
+		self.value == node.value and \
+		self.children == node.children and \
+		self.props == node.props:
+			return True
+		return False
 
 	def to_html(self):
 		raise NotImplementedError()
@@ -63,3 +72,28 @@ class ParentNode(HTMLNode):
 		for node in self.children:
 			child_string += node.to_html()
 		return f"<{self.tag}>{child_string}</{self.tag}>"
+
+
+def text_node_to_html_node(text_node:TextNode) -> HTMLNode:
+	match text_node.text_type:
+		case TextType.TEXT:
+			return LeafNode(tag=None, value=text_node.text)
+		case TextType.BOLD:
+			return LeafNode(tag="b", value=text_node.text)
+		case TextType.ITALIC:
+			return LeafNode(tag="i", value=text_node.text)
+		case TextType.CODE:
+			return LeafNode(tag="code", value=text_node.text)
+		case TextType.LINK:
+			props = {
+				"href":text_node.url
+			}
+			return LeafNode(tag="a", value=text_node.text, props=props)
+		case TextType.IMAGE:
+			props = {
+				"src":text_node.url,
+				"alt":text_node.text
+			}
+			return LeafNode(tag="img", value="", props=props)
+		case _ :
+			raise ValueError("Unsupported text type")
