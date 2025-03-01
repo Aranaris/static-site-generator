@@ -8,7 +8,7 @@ class HTMLNode():
 		self.props = kwargs.get("props", None)
 
 	def to_html(self):
-		raise NotImplementedError
+		raise NotImplementedError()
 
 	def props_to_html(self) -> str:
 		if self.props is None:
@@ -41,9 +41,25 @@ class LeafNode(HTMLNode):
 
 	def to_html(self):
 		if self.value is None:
-			raise ValueError
+			raise ValueError("Value cannot be None.")
 		
 		if self.tag is None:
 			return self.value
 		
 		return f"<{self.tag}>{self.value}</{self.tag}>"
+	
+class ParentNode(HTMLNode):
+	def __init__(self, tag, children, **kwargs) -> None:
+		if kwargs.get("value", None) is not None:
+			print("Parent Node should not have a value")
+		super().__init__(tag=tag, children=children, **kwargs)
+
+	def to_html(self):
+		if self.tag is None:
+			raise ValueError("Tag cannot be None.")
+		if self.children is None:
+			raise ValueError("Parent Node must have children.")
+		child_string = ""
+		for node in self.children:
+			child_string += node.to_html()
+		return f"<{self.tag}>{child_string}</{self.tag}>"
