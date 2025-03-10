@@ -32,12 +32,13 @@ class HTMLNode():
 
 	def __repr__(self) -> str:
 
-		node_string = f"HTMLNode( \n\
-		Tag: {self.tag}, \n\
-		Value: {self.value}, \n\
-		Children: {str(self.children) if self.children is not None else self.children}, \n\
-		Props: {self.props_to_html()}\n\
-		)"
+		children_string = ""
+		if self.children is None:
+			children_string = "[]"
+		else:
+			children_string = ", ".join(map(str, self.children))
+			children_string = "[" + children_string + "]"
+		node_string = f"HTMLNode(Tag: {self.tag}, Value: {self.value}, Children: {children_string}, Props: {self.props_to_html()})"
 
 		return textwrap.dedent(node_string)
 	

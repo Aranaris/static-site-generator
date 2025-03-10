@@ -17,12 +17,13 @@ class TestHTMLNode(unittest.TestCase):
 			"href":"https://www.google.com",
 			"target":"_blank"
 		}
-		child_node = HTMLNode(tag="ChildTag", value="ChildValue")
+		children_nodes = [HTMLNode(tag="ChildTag", value="ChildValue")]
 
 		node = HTMLNode( \
 				tag="TagTest", value="ValueTest", \
-				children=child_node, props=node_props)
-		print(repr(node))
+				children=children_nodes, props=node_props)
+		self.assertEqual(repr(node), \
+			'HTMLNode(Tag: TagTest, Value: ValueTest, Children: [HTMLNode(Tag: ChildTag, Value: ChildValue, Children: [], Props: None)], Props: href="https://www.google.com" target="_blank")')
 	
 	def test_leaf_to_html_p(self):
 		node = LeafNode("p", "Hello, world!")
