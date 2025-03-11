@@ -46,3 +46,43 @@ class TestMarkdown(unittest.TestCase):
 		expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
 
 		self.assertEqual(extracted_text, expected)
+
+	def test_split_nodes_link(self):
+		node = TextNode(
+				"This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+				TextType.TEXT,
+		)
+		new_nodes = markdown.split_nodes_link([node])
+
+		expected = [
+				TextNode("This is text with a link ", TextType.TEXT),
+				TextNode("to boot dev", TextType.LINK, url="https://www.boot.dev"),
+				TextNode(" and ", TextType.TEXT),
+				TextNode(
+						"to youtube", TextType.LINK, url="https://www.youtube.com/@bootdotdev"
+				),
+		]
+
+		self.assertEqual(new_nodes, expected)
+
+	def test_split_nodes_image(self):
+		node = TextNode(
+			"This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+			TextType.TEXT,
+		)
+
+		new_nodes = markdown.split_nodes_image([node])
+
+		expected = [
+				TextNode("This is text with an ", TextType.TEXT),
+				TextNode("image", TextType.IMAGE, url="https://i.imgur.com/zjjcJKZ.png"),
+				TextNode(" and another ", TextType.TEXT),
+				TextNode(
+					"second image", TextType.IMAGE, url="https://i.imgur.com/3elNhQu.png"
+				),
+			]
+		
+		self.assertEqual(
+			new_nodes,
+			expected
+		)
