@@ -73,3 +73,13 @@ def text_to_textnodes(text:str) -> list[TextNode]:
 	images_split = split_nodes_image(code_split)
 	link_split = split_nodes_link(images_split)
 	return link_split
+
+def markdown_to_blocks(markdown:str) -> list[str]:
+	blocks = []
+
+	split = markdown.split("\n\n")
+	for block in split:
+		temp = block.strip()
+		if temp != "":
+			blocks.append(temp)
+	return blocks
