@@ -111,6 +111,22 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 				heading_node = text_node_to_html_node(temp_text_node)
 				heading_node.tag = f"h{h_type}"
 				children_nodes.append(heading_node)
+			case "unordered_list":
+				list_items = block.splitlines()
+				list_nodes = []
+				for line in list_items:
+					text = line.split(" ", 1)[1]
+					list_sub_nodes = text_to_textnodes(text)
+					list_nodes.append(ParentNode("li", [text_node_to_html_node(x) for x in list_sub_nodes]))
+				children_nodes.append(ParentNode("ul", list_nodes))
+			case "ordered_list":
+				list_items = block.splitlines()
+				list_nodes = []
+				for line in list_items:
+					text = line.split(" ", 1)[1]
+					list_sub_nodes = text_to_textnodes(text)
+					list_nodes.append(ParentNode("li", [text_node_to_html_node(x) for x in list_sub_nodes]))
+				children_nodes.append(ParentNode("ol", list_nodes))
 				
 				
 
