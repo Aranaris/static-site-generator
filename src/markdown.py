@@ -131,11 +131,12 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 				stripped_text = '\n'.join([x.lstrip('>') for x in quote_lines])
 				sub_quote_nodes = text_to_textnodes(stripped_text)
 				children_nodes.append(ParentNode("quoteblock", [text_node_to_html_node(x) for x in sub_quote_nodes]))
-
-				
-				
-
-				
+			case "paragraph":
+				paragraph_lines = block.splitlines()
+				stripped_text = ' '.join(paragraph_lines)
+				paragraph_sub_nodes = text_to_textnodes(stripped_text)
+				sub_html_nodes = [text_node_to_html_node(x) for x in paragraph_sub_nodes]
+				children_nodes.append(ParentNode("p", sub_html_nodes))
 
 	parent_node = ParentNode(tag="div", children=children_nodes)
 	return parent_node
