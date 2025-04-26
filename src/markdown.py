@@ -1,6 +1,8 @@
 import re
 
 from textnode import TextNode, TextType
+from htmlnode import ParentNode, text_node_to_html_node
+from block import block_to_block_type
 
 def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:TextType) -> list[TextNode]:
 	new_nodes = []
@@ -83,3 +85,36 @@ def markdown_to_blocks(markdown:str) -> list[str]:
 		if temp != "":
 			blocks.append(temp)
 	return blocks
+
+def markdown_to_html_node(markdown:str) -> ParentNode:
+	blocks = markdown_to_blocks(markdown)
+	children_nodes = []
+
+	for block in blocks:
+		temp_text_node = TextNode("", "text")
+		block_type = block_to_block_type(block)
+
+		match block_type:
+			case "code":
+				temp_text_node.text_type = TextType.CODE
+				temp_text_node.text = block[3:-3]
+				code_node = text_node_to_html_node(temp_text_node)
+
+				children_nodes.append(ParentNode("pre", [code_node]))
+			case "heading":
+				h_type = 0
+				for char in block:
+					if char != "#":
+						break
+					h_type += 1
+				temp_text_node.text = block.split(" ", 1)[1]
+				heading_node = text_node_to_html_node(temp_text_node)
+				heading_node.tag = f"h{h_type}"
+				children_nodes.append(heading_node)
+				
+				
+
+				
+
+	parent_node = ParentNode(tag="div", children=children_nodes)
+	return parent_node
