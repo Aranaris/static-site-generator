@@ -197,3 +197,16 @@ the **same** even with inline stuff
 			html,
 			"<div><ol><li>This is an ordered list</li><li>with items</li></ol></div>"
 		)
+
+	def test_quoteblock(self):
+		md = """
+>This is a quote block
+>with multiple lines
+		"""
+
+		node = markdown.markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><quoteblock>This is a quote block\nwith multiple lines</quoteblock></div>"
+		)

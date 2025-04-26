@@ -99,7 +99,6 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 				temp_text_node.text_type = TextType.CODE
 				temp_text_node.text = block[3:-3]
 				code_node = text_node_to_html_node(temp_text_node)
-
 				children_nodes.append(ParentNode("pre", [code_node]))
 			case "heading":
 				h_type = 0
@@ -127,6 +126,12 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 					list_sub_nodes = text_to_textnodes(text)
 					list_nodes.append(ParentNode("li", [text_node_to_html_node(x) for x in list_sub_nodes]))
 				children_nodes.append(ParentNode("ol", list_nodes))
+			case "quote":
+				quote_lines = block.splitlines()
+				stripped_text = '\n'.join([x.lstrip('>') for x in quote_lines])
+				sub_quote_nodes = text_to_textnodes(stripped_text)
+				children_nodes.append(ParentNode("quoteblock", [text_node_to_html_node(x) for x in sub_quote_nodes]))
+
 				
 				
 
