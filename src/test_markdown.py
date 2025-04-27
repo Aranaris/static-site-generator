@@ -219,3 +219,17 @@ the **same** even with inline stuff
 			title,
 			"Hello"
 		)
+
+		md = """
+	# Hello  
+
+	### Test Sub Header
+
+	>test quoteblock not in heading	
+	"""
+
+		title = markdown.extract_title(md)
+		self.assertEqual(
+			title,
+			"Hello"
+		)
