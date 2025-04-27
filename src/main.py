@@ -1,4 +1,4 @@
-from textnode import TextNode
+
 import os, shutil
 
 def main():

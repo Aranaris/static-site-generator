@@ -13,7 +13,12 @@ class BlockType(Enum):
 def block_to_block_type(block:str) -> BlockType:
 	match block[0]:
 		case "#":
-			if re.search(r"^(\#)\1+ ", block) and not re.search(r"^(\#)\1{6}+ ", block):
+			if re.search(r"^(\#)\1{6}", block):
+				return "paragraph"
+			if (
+				re.search(r"^\# ", block) or
+				re.search(r"^(\#)\1+ ", block)
+			):
 				return "heading"
 		case "`":
 			if re.search(r"^(\`)\1{2}", block) and re.search(r"(\`)\1{2}", block):

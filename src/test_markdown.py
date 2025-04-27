@@ -210,3 +210,12 @@ the **same** even with inline stuff
 			html,
 			"<div><quoteblock>This is a quote block\nwith multiple lines</quoteblock></div>"
 		)
+	
+	def test_extracttitle(self):
+		md = "# Hello"
+
+		title = markdown.extract_title(md)
+		self.assertEqual(
+			title,
+			"Hello"
+		)

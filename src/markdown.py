@@ -140,3 +140,10 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 
 	parent_node = ParentNode(tag="div", children=children_nodes)
 	return parent_node
+
+def extract_title(markdown:str) -> str:
+	html_node = markdown_to_html_node(markdown)
+	for node in html_node.children:
+		if node.tag == "h1":
+			return node.value
+	raise Exception("no title found")
