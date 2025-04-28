@@ -18,23 +18,24 @@ def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:Tex
 	return new_nodes
 
 def extract_markdown_images(text:str) -> list[tuple]:
-	matches = re.findall(r"!\[([^\[\]]*)\]\((\w+:?\/\/[^\s]*)\)", text)
+	matches = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 	return matches
 
 def extract_markdown_links(text:str) -> list[tuple]:
-	matches = re.findall(r"[^!]\[([^\[\]]*)\]\((\w+:?\/\/[^\s]*)\)", text)
+	matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 	return matches
 
 def split_nodes_image(old_nodes:list[TextNode]) -> list[TextNode]:
 	new_nodes = []
 
 	for node in old_nodes:
-		matches = re.finditer(r"!\[([^\[\]]*)\]\((\w+:?\/\/[^\s]*)\)", node.text)
+		matches = re.finditer(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", node.text)
 
 		i = 0
 		for match in matches:
-			temp_node = TextNode(node.text[i:match.start()], node.text_type)
-			new_nodes.append(temp_node)
+			if match.start() != 0:
+				temp_node = TextNode(node.text[i:match.start()], node.text_type)
+				new_nodes.append(temp_node)
 			match_text = extract_markdown_images(match.group())
 			image_text_node = TextNode(match_text[0][0], TextType.IMAGE, url=match_text[0][1])
 			new_nodes.append(image_text_node)
@@ -49,11 +50,11 @@ def split_nodes_image(old_nodes:list[TextNode]) -> list[TextNode]:
 def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
 	new_nodes = []
 	for node in old_nodes:
-		matches = re.finditer(r"[^!]\[([^\[\]]*)\]\((\w+:?\/\/[^\s]*)\)", node.text)
+		matches = re.finditer(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", node.text)
 
 		i = 0
 		for match in matches:
-			temp_node = TextNode(node.text[i:match.start() + 1], node.text_type)
+			temp_node = TextNode(node.text[i:match.start()], node.text_type)
 			new_nodes.append(temp_node)
 			match_text = extract_markdown_links(match.group())
 			link_text_node = TextNode(match_text[0][0], TextType.LINK, url=match_text[0][1])
@@ -78,7 +79,6 @@ def text_to_textnodes(text:str) -> list[TextNode]:
 
 def markdown_to_blocks(markdown:str) -> list[str]:
 	blocks = []
-
 	split = markdown.split("\n\n")
 	for block in split:
 		temp = block.strip()
@@ -129,8 +129,8 @@ def markdown_to_html_node(markdown:str) -> ParentNode:
 			case "quote":
 				quote_lines = block.splitlines()
 				stripped_text = '\n'.join([x.lstrip('>') for x in quote_lines])
-				sub_quote_nodes = text_to_textnodes(stripped_text)
-				children_nodes.append(ParentNode("quoteblock", [text_node_to_html_node(x) for x in sub_quote_nodes]))
+				sub_quote_nodes = text_to_textnodes(stripped_text.strip())
+				children_nodes.append(ParentNode("blockquote", [text_node_to_html_node(x) for x in sub_quote_nodes]))
 			case "paragraph":
 				paragraph_lines = block.splitlines()
 				stripped_text = ' '.join(paragraph_lines)

@@ -208,7 +208,7 @@ the **same** even with inline stuff
 		html = node.to_html()
 		self.assertEqual(
 			html,
-			"<div><quoteblock>This is a quote block\nwith multiple lines</quoteblock></div>"
+			"<div><blockquote>This is a quote block\nwith multiple lines</blockquote></div>"
 		)
 	
 	def test_extracttitle(self):
