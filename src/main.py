@@ -2,12 +2,13 @@ from markdown import extract_title, markdown_to_html_node
 
 
 import os, shutil, re
+from pathlib import Path
 
 def main():
 	with open("run.log", "w") as log_file:
 		copy_to_dir("static","public",log_file)
 
-	generate_page("content/index.md", "template.html", "public/index.html")
+	generate_pages_recursive("content", "template.html", "public")
 
 def copy_to_dir(src_dir:str, dest_dir:str, log_file:object) -> None:
 	if not os.path.exists(dest_dir):
@@ -56,6 +57,20 @@ def generate_page(from_path:str, template_path:str, dest_path:str) -> None:
 
 	with open(dest_path, "w") as dest_file:
 		dest_file.write(output)
+
+def generate_pages_recursive(dir_path_content:str, template_path:str, dest_dir_path:str) -> None:
+	if not os.path.exists(dir_path_content):
+		raise FileNotFoundError(f"directory {dir_path_content} does not exist")
+	
+	for filename in os.listdir(dir_path_content):
+		src_pathname = os.path.join(dir_path_content, filename)
+		if os.path.isfile(src_pathname):
+			dest_pathname = os.path.join(dest_dir_path, f"{Path(filename).stem}.html")
+			generate_page(src_pathname, template_path, dest_pathname)
+		elif os.path.isdir(src_pathname):
+			new_dest_dir = os.path.join(dest_dir_path, filename)
+			os.mkdir(new_dest_dir)
+			generate_pages_recursive(src_pathname, template_path, new_dest_dir)
 
 if __name__ == "__main__":
 	main()
